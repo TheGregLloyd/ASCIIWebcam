@@ -1,4 +1,6 @@
 import cv2, os, time, sys, shutil
+import sounddevice as sd
+import numpy as np
 
 #Settings
 
@@ -26,6 +28,13 @@ def clear_screen():
 def move_cursor_home():
     print("\033[H", end = "")
 
+#Microphone input
+def microphone_callback(indata, frames, time_info, status):
+    if status:
+        print(status)
+
+    volume = np.linalg.norm(indata) * 10
+    print(f"\rMicrophone volume: {volume:.2f}", end="")
 
 #Frame to ASCII conversion
 
@@ -44,7 +53,7 @@ def frame_to_ascii(frame, width):
 
     resized = cv2.resize(gray, (width, new_height), interpolation=cv2.INTER_AREA)
     resized_color = cv2.resize(color, (width, new_height), interpolation=cv2.INTER_AREA)
-    resized_color = cv2.GaussianBlur(resized_color, (3, 3), 0)
+    resized_color = cv2.GaussianBlur(resized_color, (1, 1), 0)
 
     chars = ASCII_CHARS
 
@@ -73,6 +82,16 @@ def open_camera():
         sys.exit(1)
 
     return camera
+
+#Microphone input
+mic = sd.InputStream(
+    device = 3,
+    samplerate=44100,
+    channels=1,
+    callback=microphone_callback
+)
+
+mic.start()
 
 def main():
 
@@ -134,6 +153,8 @@ def main():
     finally:
 
         camera.release()
+        mic.stop()
+        mic.close()
 
         #restore terminal
         show_cursor()
