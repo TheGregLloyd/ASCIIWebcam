@@ -5,6 +5,7 @@ import cv2, os, time, sys, shutil
 
 ASCII_CHARS = r'''$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. '''
 
+COLORS = None
 #Webcam
 CAMERA_INDEX = 0
 
