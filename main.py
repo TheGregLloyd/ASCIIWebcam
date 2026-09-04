@@ -32,6 +32,7 @@ def move_cursor_home():
 def frame_to_ascii(frame, width):
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     height, original_width = gray.shape
 
@@ -42,6 +43,7 @@ def frame_to_ascii(frame, width):
     new_height = max(1, int(width * aspect_ratio * char_aspect))
 
     resized = cv2.resize(gray, (width, new_height), interpolation=cv2.INTER_AREA)
+    resized_color = cv2.resize(color, (width, new_height), interpolation=cv2.INTER_AREA)
 
     chars = ASCII_CHARS
 
@@ -50,11 +52,16 @@ def frame_to_ascii(frame, width):
 
     lines = []
 
-    for row in indexes:
-        line = "".join(chars[pixel] for pixel in row)
+    lines = []
+
+    for row_index, row in enumerate(indexes):
+        line = "".join(
+            f"\033[38;2;{red};{green};{blue}m{chars[pixel]}"
+            for pixel, (red, green, blue) in zip(row, resized_color[row_index])
+        )
         lines.append(line)
 
-    return "\n".join(lines)
+    return "\n".join(lines) + "\033[0m"
 
 #controlling the camera
 def open_camera():
