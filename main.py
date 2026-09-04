@@ -44,13 +44,12 @@ def frame_to_ascii(frame, width):
 
     resized = cv2.resize(gray, (width, new_height), interpolation=cv2.INTER_AREA)
     resized_color = cv2.resize(color, (width, new_height), interpolation=cv2.INTER_AREA)
+    resized_color = cv2.GaussianBlur(resized_color, (3, 3), 0)
 
     chars = ASCII_CHARS
 
     # Map grayscale pixels from 0-255 into the available character indexes.
     indexes = (resized.astype(int) * (len(chars) - 1)) // 255
-
-    lines = []
 
     lines = []
 
