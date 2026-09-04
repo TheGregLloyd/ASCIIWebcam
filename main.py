@@ -2,7 +2,6 @@ import cv2, os, time, sys, shutil
 
 #Settings
 
-WIDTH = 120
 
 ASCII_CHARS = r'''$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. '''
 
@@ -101,7 +100,10 @@ def main():
             frame = cv2.flip(frame, 1)
 
             # convert the frame to ascii
-            ascii_frame = frame_to_ascii(frame, WIDTH)
+
+            width = shutil.get_terminal_size().columns
+            
+            ascii_frame = frame_to_ascii(frame, width)
 
             # draw the frame
 
